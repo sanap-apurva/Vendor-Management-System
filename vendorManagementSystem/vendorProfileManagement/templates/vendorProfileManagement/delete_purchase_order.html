@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Purchase Order</title>
+</head>
+<body>
+    <h1>Delete Purchase Order: {{ purchase_order.po_number }}</h1>
+
+    <p>Are you sure you want to delete this purchase order?</p>
+
+    <form method="post" action="{% url 'delete_purchase_order' po_id=purchase_order.id %}">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <a href="{% url 'purchase_order_list' %}">Cancel</a>
+    </form>
+</body>
+</html>
