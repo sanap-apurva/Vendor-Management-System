@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vendors</title>
+</head>
+<body>
+    <h1>Vendors</h1>
+    <h5>Click on vendor to view vendor details</h5>
+    <ul>
+        {% for vendor in vendors %}
+            <li>
+                {{ vendor.name }} &nbsp;
+                <a href="{% url 'vendor_detail' vendor.id %}"><button>Show details</button></a> &nbsp;
+                <a href="{% url 'vendor_performance' vendor.id%}"><button>Show performance metrics</button></a> <hr>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'create_vendor' %}">Add New Vendor</a> &nbsp;
+    <a href="{% url 'home' %}">Homepage</a> &nbsp;
+    <a href="javascript:history.back()">Back</a>
+
+</body>
+</html>
