@@ -7,11 +7,11 @@ urlpatterns = [
     path('', views.home, name='home'),
 
     ##################### VENDORS ###############################################################
-    path('vendors/', views.vendor_list, name='vendor_list'),
-    path('vendors/<int:vendor_id>/', views.vendor_detail, name='vendor_detail'),
-    path('vendors/create/', views.create_vendor, name='create_vendor'),
-    path('vendors/edit/<int:vendor_id>', views.edit_vendor, name='edit_vendor'),
-    path('vendors/delete/<int:vendor_id>', views.delete_vendor, name='delete_vendor'),
+    path('api/vendors/', views.vendor_list, name='vendor_list'),
+    path('api/vendors/<int:vendor_id>/', views.vendor_detail, name='vendor_detail'),
+    path('api/vendors/create/', views.create_vendor, name='create_vendor'),
+    path('api/vendors/edit/<int:vendor_id>', views.edit_vendor, name='edit_vendor'),
+    path('api/vendors/delete/<int:vendor_id>', views.delete_vendor, name='delete_vendor'),
     path('api/vendors/<int:vendor_id>/performance/', views.vendor_performance, name='vendor_performance'),
 
     ############### Purchase Order UI ###########################################################

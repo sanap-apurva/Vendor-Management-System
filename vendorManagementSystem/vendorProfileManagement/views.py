@@ -56,15 +56,19 @@ def vendor_performance(request, vendor_id):
 
     # Retrieve historical performance records for the vendor
     performance_records = HistoricalPerformance.objects.filter(vendor=vendor)
+    try:
+        if performance_records.exists():
+            # Get the latest performance record for the vendor
+            latest_performance = performance_records.latest('date')
+            serializer = HistoricalPerformanceSerializer(latest_performance)
+            return render(request, 'vendor_performance.html', {'vendor': vendor, 'performance': serializer.data})
+        else:
+            # No performance records found for the vendor
+            return render(request, 'vendor_performance.html', {'vendor': vendor,'performance': None})
 
-    if performance_records.exists():
-        # Get the latest performance record for the vendor
-        latest_performance = performance_records.latest('date')
-        serializer = HistoricalPerformanceSerializer(latest_performance)
-        return render(request, 'vendor_performance.html', {'vendor': vendor, 'performance': serializer.data})
-    else:
-        # No performance records found for the vendor
-        return render(request, 'vendor_performance.html', {'vendor': vendor,'performance': None})
+    except Exception as e:
+        logger.error(f"Error retrieving Purchase Axknowledgement data: {e}")
+
 
 
 logger = logging.getLogger(__name__)
@@ -110,35 +114,18 @@ def edit_vendor(request, vendor_id):
         form = VendorForm(instance=vendor)
     return render(request, 'edit_vendor.html', {'form': form, 'vendor': vendor})
 
-# def delete_vendor(request, vendor_id):
-#     vendor = get_object_or_404(Vendor, id=vendor_id)
-#     if request.method == 'POST':
-#         # Retrieve all related PurchaseOrder instances and delete them
-#         purchase_orders = PurchaseOrder.objects.filter(vendor=vendor)
-#         purchase_orders.delete()
-#         vendor.delete()
-#         return redirect('vendor_detail')
-#     return render(request, 'delete_vendor.html', {'vendor': vendor})
-
-
 def delete_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, id=vendor_id)
 
     if request.method == 'POST':
         try:
             vendor.delete()
-            print("delete completed")
             return redirect('vendor_list')
         except IntegrityError:
             error_message = "Cannot delete vendor due to related objects (e.g., Purchase Orders)."
-            print("error message:",error_message)
             return render(request, 'delete_vendor.html', {'vendor': vendor, 'error_message': error_message})
 
     return render(request, 'delete_vendor.html', {'vendor': vendor})
-
-# def purchase_order_list(request):
-#     purchase_orders = PurchaseOrder.objects.all()
-#     return render(request, 'purchase_order_list.html', {'purchase_orders': purchase_orders})
 
 
 def purchase_order_list(request):
@@ -161,10 +148,8 @@ def create_purchase_order(request):
         form = PurchaseOrderForm(request.POST)
         if form.is_valid():
             form.save()
-            print("saving form")
             return redirect('purchase_order_list')
     else:
-        print("something went wrong")
         form = PurchaseOrderForm()
 
     # Render the form template with the form variable (either empty or containing submitted data)
@@ -173,10 +158,8 @@ def create_purchase_order(request):
 
 def edit_purchase_order(request, po_id):
     purchase_order = get_object_or_404(PurchaseOrder, id=po_id)
-    print("received this purchase form", purchase_order)
     if request.method == 'POST':
         form = PurchaseOrderForm(request.POST, instance=purchase_order)
-        # print("form", form)
         try:
             if form.is_valid():
                 form.save()
@@ -187,7 +170,6 @@ def edit_purchase_order(request, po_id):
             form.add_error(None, str(ie))
     else:
         form = PurchaseOrderForm(instance=purchase_order)
-        print("purchase order instance", purchase_order)
     return render(request, 'edit_purchase_order.html', {'form': form, 'purchase_order': purchase_order})
 
 
